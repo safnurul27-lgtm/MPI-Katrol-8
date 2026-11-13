@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPI Katrol – IPA Kelas 8</title>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --ink:#1d2b3a; --muted:#5a6b7d;
+  --blue:#2563eb; --teal:#0d9488; --orange:#ea580c; --purple:#7c3aed; --red:#dc2626; --green:#16a34a;
+  --line:#d9e2ec;
+}
+*{box-sizing:border-box}
+html{font-size:20px}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:linear-gradient(120deg,#1e3a8a,#2563eb 60%,#0d9488);color:#fff;padding:.6rem 1rem;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+header h1{margin:0;font-size:1.15rem}
+header small{opacity:.9}
+nav{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem}
+nav button{border:0;background:rgba(255,255,255,.18);color:#fff;font-size:.8rem;padding:.45rem .8rem;border-radius:999px;cursor:pointer;font-weight:600}
+nav button.active{background:#fff;color:#1e3a8a}
+main{max-width:1200px;margin:0 auto;padding:1rem}
+.tab{display:none}.tab.active{display:block}
+h2{margin:.2rem 0 .6rem;font-size:1.5rem}
+h3{margin:.2rem 0 .4rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1rem 1.2rem;margin-bottom:1rem;box-shadow:0 2px 6px rgba(20,40,70,.05)}
+.grid{display:grid;gap:1rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:12px;padding:.6rem 1.1rem;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.alt{background:var(--teal)}.btn.warn{background:var(--orange)}.btn.ghost{background:#e8eef7;color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;padding:.15rem .6rem;border-radius:999px;font-size:.7rem;font-weight:700;color:#fff;background:var(--purple)}
+.formula{background:#eef4ff;border-left:6px solid var(--blue);padding:.6rem 1rem;border-radius:8px;font-size:1.05rem;margin:.5rem 0}
+.think{background:#fff7ed;border-left:6px solid var(--orange);padding:.6rem 1rem;border-radius:8px;margin:.6rem 0}
+.ok{background:#ecfdf5;border-left:6px solid var(--green);padding:.6rem 1rem;border-radius:8px;margin:.6rem 0}
+ul{margin:.3rem 0 .3rem 1.2rem;padding:0}
+li{margin:.15rem 0}
+.sub{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem}
+.sub button{border:2px solid var(--blue);background:#fff;color:var(--blue);padding:.4rem .9rem;border-radius:999px;font-weight:700;font-size:.85rem;cursor:pointer}
+.sub button.active{background:var(--blue);color:#fff}
+.sp{display:none}.sp.active{display:block}
+.vid{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
+.vid.short{aspect-ratio:9/16;max-height:62vh;width:auto;margin:0 auto}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:.7rem 1rem;margin:.4rem 0;font-size:.95rem;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--blue);background:#f1f6ff}
+.opt.right{background:#dcfce7;border-color:var(--green)}
+.opt.wrong{background:#fee2e2;border-color:var(--red)}
+.bar{height:12px;background:#e5eaf2;border-radius:99px;overflow:hidden;margin:.4rem 0}
+.bar>div{height:100%;background:var(--teal);width:0;transition:width .3s}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{border:1px solid var(--line);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:#eaf0fa}
+.ro{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.5rem;margin-top:.5rem}
+.ro div{background:#f1f5fb;border-radius:10px;padding:.5rem .7rem;font-size:.85rem}
+.ro b{display:block;font-size:1.2rem;color:var(--blue)}
+input[type=number],input[type=text],select{font-size:.95rem;padding:.4rem .6rem;border:2px solid var(--line);border-radius:10px;max-width:100%}
+input[type=range]{width:100%;height:2rem}
+.chip{border-radius:14px;padding:.5rem .6rem;color:#fff;text-align:center;font-weight:700;transition:transform .2s}
+.chip.act{transform:scale(1.08);outline:5px solid #facc15}
+.chip .sc{font-size:1.7rem}
+.score{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:.8rem}
+.fc{border:2px dashed var(--line);border-radius:14px;padding:.8rem;cursor:pointer;background:#fff}
+.fc .em{font-size:2.2rem}
+.fc .more{display:none;margin-top:.4rem;font-size:.85rem;color:var(--muted)}
+.fc.open .more{display:block}
+.fc.open{border-style:solid;border-color:var(--teal);background:#f0fdfa}
+.center{text-align:center}
+.big{font-size:1.4rem;font-weight:800}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:.5rem;height:240px;margin:1rem 0}
+.pod div{width:130px;border-radius:12px 12px 0 0;color:#fff;text-align:center;font-weight:800;padding-top:.3rem}
+@media (max-width:700px){html{font-size:16px}.score{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚙️ Media Pembelajaran Interaktif – Pesawat Sederhana: KATROL</h1>
+  <small>IPA Kelas 8 SMP · Dirancang untuk Interactive Flat Panel (sentuh layar)</small>
+  <nav id="nav"></nav>
+</header>
+<main>
+
+<!-- ===== BERANDA ===== -->
+<section class="tab active" id="beranda">
+  <div class="card">
+    <h2>Selamat datang, para ilmuwan muda! 👋</h2>
+    <p>Hari ini kita menyelidiki bagaimana <b>katrol</b> membantu manusia mengangkat beban. Kamu akan <b>menebak</b>, <b>mencoba</b>, <b>menghitung</b>, lalu <b>berkompetisi</b> bersama kelompokmu.</p>
+    <div class="grid g2">
+      <div>
+        <h3>🎯 Capaian Pembelajaran</h3>
+        <p>Murid mampu menganalisis hubungan usaha dan energi, termasuk pesawat sederhana.</p>
+      </div>
+      <div>
+        <h3>✅ Tujuan Pembelajaran</h3>
+        <ul>
+          <li>Menjelaskan pengertian pesawat sederhana.</li>
+          <li>Menganalisis katrol tetap, bergerak, dan gabungan dalam kehidupan sehari-hari.</li>
+          <li>Menghitung gaya, usaha, dan keuntungan mekanis katrol.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <h3>🗺️ Alur Belajar (ketuk untuk mulai)</h3>
+  <div class="grid g3" id="alur"></div>
+</section>
+
+<!-- ===== ASESMEN AWAL ===== -->
+<section class="tab" id="asesmen">
+  <div class="card">
+    <h2>📝 Asesmen Awal – Seberapa Jauh Pengetahuanmu?</h2>
+    <p>Ini bukan ujian. Nilainya tidak masuk rapor, gunanya agar guru tahu bagian mana yang perlu diperdalam.</p>
+    <div class="bar"><div id="asBar"></div></div>
+    <div id="asBox"></div>
+  </div>
+</section>
+
+<!-- ===== MATERI ===== -->
+<section class="tab" id="materi">
+  <h2>📚 Materi</h2>
+  <div class="sub" id="subMateri"></div>
+
+  <div class="sp active" id="m0">
+    <div class="card">
+      <h3>Apa itu Pesawat Sederhana?</h3>
+      <p>Pesawat sederhana adalah alat yang membuat pekerjaan menjadi <b>lebih mudah</b>: gaya yang dibutuhkan lebih kecil, atau arah gaya lebih nyaman. Empat jenisnya: <b>tuas, bidang miring, katrol, roda berporos</b>.</p>
+      <div class="formula">Usaha: <b>W = F × s</b> (W dalam joule, F dalam newton, s dalam meter)</div>
+      <div class="think">💭 <b>Pikirkan:</b> Kalau alat membuat gaya jadi lebih kecil, apakah <i>usaha</i> kita ikut berkurang? Simpan jawabanmu, nanti kita uji di Lab Mini.</div>
+      <p><b>Katrol</b> = roda beralur yang dililitkan tali atau rantai. Ada tiga jenis: tetap, bergerak, dan gabungan.</p>
+    </div>
+  </div>
+
+  <div class="sp" id="m1">
+    <div class="grid g2">
+      <div class="card">
+        <span class="pill" style="background:var(--blue)">Katrol Tetap</span>
+        <h3>Poros katrol tidak berpindah</h3>
+        <ul>
+          <li>Katrol dipasang di tempat tetap (tiang, langit-langit).</li>
+          <li><b>Fungsi:</b> mengubah <b>arah</b> gaya, menarik ke bawah, beban naik.</li>
+          <li><b>Keuntungan mekanis (KM) = 1</b>, jadi gaya tarik <b>F = w</b>.</li>
+          <li>Tali ditarik sejauh <b>s = h</b> (tinggi beban naik).</li>
+        </ul>
+        <div class="formula">w × Lb = F × Lk, dengan Lb = Lk = r<br>w/F = Lk/Lb = 1 → F = w<br>KM = s/h = 1 <small>(s = panjang tali yang ditarik, h = tinggi beban naik)</small></div>
+        <figure style="margin:.5rem 0;text-align:center"><img src="https://hitools.co.id/wp-content/uploads/2024/01/Katrol-Pada-Tiang-Bendera-1024x1024.png" alt="Katrol tetap pada tiang bendera" style="max-width:100%;max-height:340px;border-radius:12px;border:1px solid var(--line)" onerror="this.outerHTML='<p class=think>Gambar tidak dapat dimuat. Periksa koneksi internet.</p>'"><figcaption style="font-size:.75rem;color:var(--muted)">Contoh katrol tetap: tiang bendera. Sumber gambar: hitools.co.id</figcaption></figure>
+      </div>
+      <div class="card center"><div id="svgM1"></div><button class="btn alt" onclick="animMini('tetap','svgM1')">▶ Tarik tali</button><div id="legM1" style="text-align:left;font-size:.8rem;margin-top:.5rem"></div></div>
+    </div>
+  </div>
+
+  <div class="sp" id="m2">
+    <div class="grid g2">
+      <div class="card">
+        <span class="pill" style="background:var(--orange)">Katrol Bergerak</span>
+        <h3>Katrol ikut bergerak bersama beban</h3>
+        <ul>
+          <li>Beban digantung pada katrol, satu ujung tali diikat di tempat tetap.</li>
+          <li>Dua tali ikut menopang beban, jadi <b>KM = 2</b>.</li>
+          <li>Gaya tarik <b>F = w/2</b>, tetapi tali harus ditarik <b>s = 2h</b>.</li>
+        </ul>
+        <div class="formula">w × Lb = F × Lk, dengan Lb = r dan Lk = 2r<br>w/F = Lk/Lb = 2 → F = w/2<br>KM = s/h = 2 <small>(tali ditarik s = 2h)</small></div>
+        <h3>🎥 Contoh katrol bergerak (KM = 2)</h3>
+        <div class="vid short"><iframe src="https://www.youtube.com/embed/w9the1d90Lg" title="Contoh katrol bergerak" allowfullscreen loading="lazy"></iframe></div>
+        <p><a target="_blank" rel="noopener" href="https://youtube.com/shorts/w9the1d90Lg">Video tidak tampil? Buka di YouTube</a></p>
+        <div class="think">💭 <b>Amati video:</b> (1) Bagian mana yang ikut naik bersama beban? (2) Berapa tali yang menopang beban? (3) Jika beban 400 N, berapa gaya tarik idealnya? (4) Mengapa tali yang ditarik harus lebih panjang daripada tinggi kenaikan beban?</div>
+      </div>
+      <div class="card center"><div id="svgM2"></div><button class="btn alt" onclick="animMini('bergerak','svgM2')">▶ Tarik tali</button><div id="legM2" style="text-align:left;font-size:.8rem;margin-top:.5rem"></div></div>
+    </div>
+  </div>
+
+  <div class="sp" id="m3">
+    <div class="grid g2">
+      <div class="card">
+        <span class="pill" style="background:var(--purple)">Katrol Gabungan (Takal)</span>
+        <h3>Gabungan katrol tetap dan bergerak</h3>
+        <ul>
+          <li>Memakai tetap dan bergerak sekaligus, dalam satu rangkaian tali.</li>
+          <li><b>KM = n</b>, dengan n = banyak tali yang menopang katrol bergerak (beban).</li>
+          <li>Gaya <b>F = w/n</b>, tali ditarik <b>s = n × h</b>.</li>
+          <li>Kelebihan: gaya kecil <b>dan</b> arah tarik nyaman (ke bawah).</li>
+        </ul>
+        <div class="formula">w × Lb = F × Lk (pada katrol bergerak: Lk = 2·Lb)<br>w/F = KM = n, dengan n = jumlah tali penopang beban<br>KM = s/h = n <small>(s = n·h)</small><br><small>Gambar tuas berlaku untuk satu katrol bergerak (n = 2). Untuk rangkaian yang lebih banyak katrol, hitung n dari jumlah tali penopang.</small></div>
+        <h3>🎥 Contoh katrol majemuk</h3>
+        <div class="vid short"><iframe src="https://www.youtube.com/embed/RojyiK2aKZo" title="Katrol gabungan" allowfullscreen loading="lazy"></iframe></div>
+        <p><a target="_blank" rel="noopener" href="https://youtube.com/shorts/RojyiK2aKZo">Video tidak tampil? Buka di YouTube</a></p>
+      </div>
+      <div class="card center"><div id="svgM3"></div><button class="btn alt" onclick="animMini('gabungan','svgM3')">▶ Tarik tali</button><div id="legM3" style="text-align:left;font-size:.8rem;margin-top:.5rem"></div><p style="font-size:.8rem;color:var(--muted)">Gambar menunjukkan n = 2. Semakin banyak katrol, semakin besar n.</p></div>
+    </div>
+  </div>
+
+  <div class="sp" id="m4">
+    <div class="card">
+      <h3>Rumus Penting (gesekan & berat katrol diabaikan)</h3>
+      <table>
+        <tr><th>Besaran</th><th>Rumus</th><th>Satuan</th></tr>
+        <tr><td>Prinsip tuas (katrol sebagai tuas)</td><td>w × Lb = F × Lk</td><td>w, F: N · Lb, Lk: m</td></tr>
+        <tr><td>Perbandingan</td><td>w / F = Lk / Lb</td><td>tanpa satuan</td></tr>
+        <tr><td>Keuntungan mekanis</td><td>KM = w / F = Lk / Lb = s / h</td><td>tanpa satuan</td></tr>
+        <tr><td>Gaya tarik</td><td>F = w / KM</td><td>newton (N)</td></tr>
+        <tr><td>Usaha</td><td>W = F × s = w × h</td><td>joule (J)</td></tr>
+      </table>
+      <div class="formula"><b>Keterangan simbol:</b><br>
+      <b>w</b> = berat beban (N) · <b>F</b> = gaya kuasa / gaya tarik (N)<br>
+      <b>Lb</b> = lengan beban, jarak titik tumpu ke titik beban (m) · <b>Lk</b> = lengan kuasa, jarak titik tumpu ke titik kuasa (m)<br>
+      <b>s</b> = panjang tali yang ditarik (jarak tempuh kuasa) · <b>h</b> = tinggi beban naik (jarak tempuh beban)<br>
+      <b>W</b> (huruf besar) = usaha (J). Jangan tertukar dengan <b>w</b> (huruf kecil) = berat beban.</div>
+      <div class="ok">✅ <b>Contoh tuas:</b> Katrol bergerak dengan r = 10 cm: Lb = 10 cm, Lk = 20 cm. w × 10 = F × 20, maka F = w/2 dan KM = 20/10 = 2.</div>
+      <div class="ok">✅ <b>Contoh:</b> Beban 600 N diangkat setinggi 2 m dengan katrol bergerak (KM = 2).<br>F = 600 ÷ 2 = <b>300 N</b> · s = 2 × 2 = <b>4 m</b> · W = 300 × 4 = <b>1.200 J</b> (sama dengan 600 × 2 = 1.200 J).</div>
+      <div class="think">💭 <b>Kesimpulan penting:</b> katrol membuat gaya lebih kecil, tetapi <b>usaha tidak berkurang</b>. Yang "dibayar" adalah jarak tarik yang lebih panjang. Di dunia nyata, karena ada gesekan, usaha yang kita lakukan malah sedikit lebih besar.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SIMULASI ===== -->
+<section class="tab" id="simulasi">
+  <h2>🔬 Simulasi Katrol</h2>
+  <div class="card">
+    <p>Ketuk dan geser komponen langsung di layar. Jika simulasi tidak muncul (beberapa situs memblokir tampilan di dalam halaman), pakai tombol di bawah.</p>
+    <div class="row" style="margin-bottom:.6rem">
+      <a class="btn warn" target="_blank" rel="noopener" href="https://compassproject.net/html5sims/pulleysim/pulley_en.html">↗ Buka simulasi layar penuh</a>
+    </div>
+    <iframe src="https://compassproject.net/html5sims/pulleysim/pulley_en.html" title="Simulasi katrol" style="width:100%;height:68vh;border:2px solid var(--line);border-radius:12px;background:#fff" allowfullscreen loading="lazy"></iframe>
+  </div>
+  <div class="card">
+    <h3>📋 Tugas Pengamatan (kerjakan per kelompok)</h3>
+    <table>
+      <tr><th>Percobaan</th><th>Yang diamati</th><th>Prediksi</th><th>Hasil</th></tr>
+      <tr><td>1. Satu katrol tetap</td><td>Gaya tarik vs berat beban; arah tarik</td><td></td><td></td></tr>
+      <tr><td>2. Satu katrol bergerak</td><td>Gaya tarik; panjang tali yang ditarik</td><td></td><td></td></tr>
+      <tr><td>3. Gabungan (tambah katrol)</td><td>Hitung tali penopang; bandingkan F dan s</td><td></td><td></td></tr>
+    </table>
+    <p><b>Pertanyaan:</b> Apa yang terjadi pada panjang tali yang kamu tarik ketika gaya makin kecil?</p>
+  </div>
+</section>
+
+<!-- ===== LAB MINI ===== -->
+<section class="tab" id="lab">
+  <h2>🧪 Lab Mini – Uji Sendiri</h2>
+  <div class="card">
+    <p><b>Prediksi dulu:</b> berapa gaya tarik yang dibutuhkan? Baru geser slider untuk membuktikan.</p>
+    <div class="row">
+      <div class="sub" id="labType" style="margin:0"></div>
+      <label>Berat beban w (N): <input type="number" id="labW" value="600" min="10" max="5000" step="10" style="width:7rem"></label>
+      <label>Jari-jari katrol r (cm): <input type="number" id="labR" value="10" min="2" max="50" style="width:6rem"></label>
+    </div>
+    <div class="grid g2">
+      <div class="center"><div id="labSvg"></div><div id="labLeg" style="text-align:left;font-size:.8rem;margin-top:.5rem"></div></div>
+      <div>
+        <label><b>Tarik tali sejauh:</b> <span id="labDv">0</span> cm</label>
+        <input type="range" id="labD" min="0" max="60" value="0">
+        <div class="ro">
+          <div>Lengan beban (Lb)<b id="rLb">-</b></div>
+          <div>Lengan kuasa (Lk)<b id="rLk">-</b></div>
+          <div>w × Lb<b id="rTb">-</b></div>
+          <div>F × Lk<b id="rTk">-</b></div>
+          <div>Gaya tarik F<b id="rF">-</b></div>
+          <div>Panjang tali ditarik (s)<b id="rS">-</b></div>
+          <div>Tinggi beban naik (h)<b id="rH">-</b></div>
+          <div>KM = Lk/Lb = s/h<b id="rKM">-</b></div>
+          <div>Usaha F × s<b id="rWk">-</b></div>
+          <div>Usaha w × h<b id="rWb">-</b></div>
+        </div>
+        <div class="think" style="margin-top:.7rem">💭 Bandingkan (1) "w × Lb" dengan "F × Lk", dan (2) "Usaha F × s" dengan "Usaha w × h". Apa yang kamu temukan?</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🧮 Kalkulator Katrol Gabungan</h3>
+    <div class="row">
+      <label>Beban w (N): <input type="number" id="kW" value="800" style="width:7rem"></label>
+      <label>Beban naik h (m): <input type="number" id="kH" value="2" step="0.5" style="width:6rem"></label>
+      <label>Tali penopang n: <select id="kN"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+      <button class="btn" onclick="hitung()">Hitung</button>
+    </div>
+    <div class="ro" id="kOut"></div>
+  </div>
+</section>
+
+<!-- ===== APLIKASI ===== -->
+<section class="tab" id="aplikasi">
+  <h2>🌏 Katrol di Sekitar Kita</h2>
+  <p>Ketuk kartu untuk membuka penjelasan.</p>
+  <div class="grid g3" id="apl"></div>
+</section>
+
+<!-- ===== KUIS ===== -->
+<section class="tab" id="kuis">
+  <h2>🏆 Kuis Battle Antar Kelompok</h2>
+  <div id="qSetup" class="card">
+    <p>Lima kelompok bergantian menjawab. Benar = <b>10 poin</b>, tambah <b>+5</b> kalau menjawab cepat (sisa waktu ≥ 20 detik). Kalau salah, kelompok lain boleh <b>merebut</b> soal untuk <b>+5 poin</b>.</p>
+    <div class="grid g3" id="qNames"></div>
+    <p><button class="btn" onclick="startQuiz()">🚀 Mulai Kuis (15 soal)</button></p>
+  </div>
+  <div id="qGame" style="display:none">
+    <div class="score" id="qScore"></div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><span class="pill" id="qNo">Soal 1/15</span><b id="qTurn"></b><b id="qTime">30</b></div>
+      <div class="bar"><div id="qBar" style="width:100%"></div></div>
+      <div class="big" id="qText" style="margin:.5rem 0"></div>
+      <div id="qOpts"></div>
+      <div id="qFb"></div>
+      <div id="qSteal" class="row"></div>
+      <p><button class="btn" id="qNext" style="display:none" onclick="nextQ()">Soal berikutnya ➜</button></p>
+    </div>
+  </div>
+  <div id="qEnd" class="card center" style="display:none"></div>
+</section>
+
+<!-- ===== RANGKUMAN ===== -->
+<section class="tab" id="rangkuman">
+  <h2>🧾 Rangkuman & Refleksi</h2>
+  <div class="card">
+    <table>
+      <tr><th>Jenis</th><th>Lk : Lb</th><th>KM</th><th>Gaya F</th><th>Panjang tali s</th><th>Ciri & contoh</th></tr>
+      <tr><td><b>Tetap</b></td><td>r : r</td><td>1</td><td>w</td><td>h</td><td>Mengubah arah gaya · tiang bendera, sumur timba</td></tr>
+      <tr><td><b>Bergerak</b></td><td>2r : r</td><td>2</td><td>w/2</td><td>2h</td><td>Katrol ikut bergerak bersama beban · pengait derek, ember material bangunan</td></tr>
+      <tr><td><b>Gabungan</b></td><td>2r : r (bagian bergerak)</td><td>n</td><td>w/n</td><td>n·h</td><td>Gaya kecil & arah nyaman · takal, derek</td></tr>
+    </table>
+    <div class="think">💭 <b>Ingat:</b> usaha ideal W = F × s = w × h <b>tidak berkurang</b> oleh katrol.</div>
+  </div>
+  <div class="card">
+    <h3>✍️ Tiket Keluar (jawab di buku)</h3>
+    <ol>
+      <li>Sebutkan satu perbedaan katrol tetap dan katrol bergerak.</li>
+      <li>Beban 900 N diangkat dengan katrol gabungan bertali penopang 3. Berapa F ideal?</li>
+      <li>Mengapa mengangkat beban dengan katrol bergerak terasa lebih ringan tetapi lebih lama?</li>
+      <li>Berikan satu contoh katrol di sekitar rumah atau sekolahmu.</li>
+    </ol>
+    <p style="font-size:.8rem;color:var(--muted)">Kunci untuk guru: (2) 300 N. (3) Gaya lebih kecil tapi tali lebih panjang ditarik, usaha sama.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ===== NAVIGASI ===== */
+const TABS=[["beranda","🏠 Beranda"],["asesmen","📝 Asesmen Awal"],["materi","📚 Materi"],["simulasi","🔬 Simulasi"],["lab","🧪 Lab Mini"],["aplikasi","🌏 Aplikasi"],["kuis","🏆 Kuis"],["rangkuman","🧾 Rangkuman"]];
+const nav=document.getElementById('nav');
+TABS.forEach(([id,t])=>{const b=document.createElement('button');b.textContent=t;b.dataset.id=id;b.onclick=()=>show(id);nav.appendChild(b)});
+function show(id){
+  document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.id===id));
+  nav.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+nav.firstChild.classList.add('active');
+const alur=[["asesmen","📝","1. Asesmen Awal","Cek pengetahuanmu"],["materi","📚","2. Materi","Tetap, bergerak, gabungan"],["simulasi","🔬","3. Simulasi","Coba langsung di layar"],["lab","🧪","4. Lab Mini","Hitung F, s, W"],["aplikasi","🌏","5. Aplikasi","Katrol di kehidupan"],["kuis","🏆","6. Kuis Battle","5 kelompok bersaing"]];
+document.getElementById('alur').innerHTML=alur.map(a=>`<div class="card center" style="cursor:pointer" onclick="show('${a[0]}')"><div style="font-size:2.4rem">${a[1]}</div><b>${a[2]}</b><div style="color:var(--muted);font-size:.85rem">${a[3]}</div></div>`).join('');
+
+/* sub-tab materi */
+const SUBM=["Pesawat Sederhana","Katrol Tetap","Katrol Bergerak","Katrol Gabungan","Rumus"];
+const sm=document.getElementById('subMateri');
+SUBM.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{document.querySelectorAll('#materi .sp').forEach((s,j)=>s.classList.toggle('active',i===j));sm.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('active',i===j))};if(i===0)b.classList.add('active');sm.appendChild(b)});
+
+/* ===== GAMBAR KATROL (SVG) ===== */
+function wheel(cx,cy,r){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#e0ecff" stroke="#1e3a8a" stroke-width="4"/><circle cx="${cx}" cy="${cy}" r="4" fill="#1e3a8a"/>`}
+function box(x,y,w,h,label){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#f59e0b" stroke="#92400e" stroke-width="3"/><text x="${x+w/2}" y="${y+h/2+5}" text-anchor="middle" font-size="15" font-weight="700" fill="#451a03">${label}</text>`}
+function hand(x,y,up){return `<text x="${x}" y="${y+8}" text-anchor="middle" font-size="30">✋</text><text x="${x+30}" y="${y+8}" font-size="22" fill="#dc2626" font-weight="700">${up?'↑':'↓'} F</text>`}
+function drawPulley(type,d,label,lab){
+  d=Math.max(0,Math.min(60,d));
+  let s='<svg viewBox="0 0 400 340" width="100%" style="max-width:430px"><line x1="30" y1="10" x2="370" y2="10" stroke="#475569" stroke-width="8"/>';
+  const rope='stroke="#92400e" stroke-width="3.5" fill="none"';
+  if(type==='tetap'){
+    const lt=210-d,hy=140+d;
+    s+=`<line x1="200" y1="10" x2="200" y2="70" stroke="#475569" stroke-width="5"/>`;
+    s+=`<path d="M172 ${lt} V70 A28 28 0 0 1 228 70 V${hy}" ${rope}/>`+wheel(200,70,28)+box(144,lt,56,50,label)+hand(228,hy+10,false);
+  }else if(type==='bergerak'){
+    const py=220-d/2,hy=100-d;
+    s+=`<path d="M176 10 V${py} A24 24 0 0 0 224 ${py} V${hy}" ${rope}/>`+wheel(200,py,24)+`<line x1="200" y1="${py}" x2="200" y2="${py+30}" stroke="#475569" stroke-width="5"/>`+box(168,py+30,64,50,label)+hand(224,hy-14,true);
+  }else{
+    const py=230-d/2,hy=150+d;
+    s+=`<line x1="240" y1="10" x2="240" y2="60" stroke="#475569" stroke-width="5"/>`;
+    s+=`<path d="M180 10 V${py} A20 20 0 0 0 220 ${py} V60 A20 20 0 0 1 260 60 V${hy}" ${rope}/>`+wheel(240,60,20)+wheel(200,py,20)+`<line x1="200" y1="${py}" x2="200" y2="${py+30}" stroke="#475569" stroke-width="5"/>`+box(168,py+30,64,50,label)+hand(260,hy+10,false);
+  }
+  if(lab)s+=annot(type,d);
+  return s+'</svg>';
+}
+/* anotasi bagian-bagian katrol sebagai tuas */
+function annot(type,d){
+  d=Math.max(0,Math.min(60,d));
+  const CT='#7c3aed',CB='#2563eb',CK='#dc2626',CS='#0d9488';
+  const tx=(x,y,t,c,sz,a)=>`<text x="${x}" y="${y}" text-anchor="${a||'middle'}" font-size="${sz||14}" font-weight="800" fill="${c}" style="paint-order:stroke;stroke:#fff;stroke-width:4px">${t}</text>`;
+  const dot=(x,y,c)=>`<circle cx="${x}" cy="${y}" r="5.5" fill="${c}" stroke="#fff" stroke-width="2"/>`;
+  const dim=(x1,x2,y,c,t,up)=>`<path d="M${x1} ${y-5}V${y+5}M${x2} ${y-5}V${y+5}M${x1} ${y}H${x2}" stroke="${c}" stroke-width="3" fill="none"/>`+tx((x1+x2)/2,up?y-9:y+19,t,c,13);
+  const vd=(x,y0,y1,t)=>d>0?`<path d="M${x-7} ${y0}H${x+7}M${x-7} ${y1}H${x+7}M${x} ${y0}V${y1}" stroke="${CS}" stroke-width="3" fill="none"/>`+tx(x+(x>200?12:-12),(y0+y1)/2+5,t,CS,14,x>200?'start':'end'):'';
+  const n=type==='tetap'?1:2;
+  const hs='h = '+(Math.round(d/n*10)/10).toString().replace('.',',')+' cm',ss='s = '+d+' cm';
+  let o='';
+  if(type==='tetap'){
+    o+=dim(172,200,112,CB,'Lb')+dim(200,228,112,CK,'Lk');
+    o+=dot(172,70,CB)+dot(200,70,CT)+dot(228,70,CK);
+    o+=tx(160,60,'B',CB)+tx(240,60,'K',CK)+tx(214,34,'T',CT);
+    o+=tx(236,128,'tali','#92400e',12,'start');
+    o+=vd(312,140,140+d,ss)+vd(118,210,210-d,hs);
+  }else if(type==='bergerak'){
+    const py=220-d/2;
+    o+=dim(176,200,py-34,CB,'Lb',true)+dim(176,224,py-56,CK,'Lk',true);
+    o+=dot(176,py,CT)+dot(200,py,CB)+dot(224,py,CK);
+    o+=tx(164,py+22,'T',CT)+tx(214,py+24,'B',CB)+tx(236,py+22,'K',CK);
+    o+=tx(232,((100-d)+py)/2+4,'tali','#92400e',12,'start');
+    o+=vd(330,100,100-d,ss)+vd(130,250,py+30,hs);
+  }else{
+    const py=230-d/2;
+    o+=dim(180,200,py-34,CB,'Lb',true)+dim(180,220,py-56,CK,'Lk',true);
+    o+=dot(180,py,CT)+dot(200,py,CB)+dot(220,py,CK);
+    o+=tx(168,py+22,'T',CT)+tx(210,py+24,'B',CB)+tx(232,py+22,'K',CK);
+    o+=tx(268,115,'tali','#92400e',12,'start')+tx(270,36,'katrol tetap','#475569',12,'start')+tx(164,py+46,'katrol bergerak','#475569',12,'end');
+    o+=vd(330,150,150+d,ss)+vd(130,260,py+30,hs);
+  }
+  return o;
+}
+function legendHTML(type){
+  const dt=c=>`<span style="display:inline-block;width:.8em;height:.8em;border-radius:50%;background:${c};margin-right:.3em"></span>`;
+  const m={
+    tetap:['poros katrol (di tengah)','tempat tali ke beban menyentuh katrol','tempat tali ke tangan menyentuh katrol','Lb = r, Lk = r → KM = Lk/Lb = 1'],
+    bergerak:['sisi tali yang diikat tetap (titik putar sesaat)','pusat katrol, tempat beban digantung','sisi tali yang ditarik tangan','Lb = r, Lk = 2r (diameter) → KM = Lk/Lb = 2'],
+    gabungan:['sisi tali yang diikat tetap pada katrol bergerak','pusat katrol bergerak, tempat beban digantung','sisi tali yang menuju katrol tetap lalu ke tangan','Lb = r, Lk = 2r → KM = 2. Katrol tetap hanya mengubah arah. Untuk rangkaian lebih banyak katrol, KM = n (jumlah tali penopang).']
+  }[type];
+  return `<div>${dt('#7c3aed')}<b>T</b> titik tumpu: ${m[0]}<br>${dt('#2563eb')}<b>B</b> titik beban: ${m[1]}<br>${dt('#dc2626')}<b>K</b> titik kuasa: ${m[2]}<br><b>Lb</b> lengan beban = jarak T–B · <b>Lk</b> lengan kuasa = jarak T–K<br><b>${m[3]}</b><br>${dt('#0d9488')}<b>s</b> = panjang tali yang ditarik · <b>h</b> = tinggi beban naik · <b>KM = s/h</b></div>`;
+}
+const mini={tetap:0,bergerak:0,gabungan:0};
+['tetap','bergerak','gabungan'].forEach((t,i)=>{document.getElementById('svgM'+(i+1)).innerHTML=drawPulley(t,0,'w',true);document.getElementById('legM'+(i+1)).innerHTML=legendHTML(t)});
+function animMini(type,id){
+  const el=document.getElementById(id);let d=0;
+  if(el._iv)clearInterval(el._iv);
+  const iv=el._iv=setInterval(()=>{d+=1;el.innerHTML=drawPulley(type,d,'w',true);if(d>=60)clearInterval(iv)},25);
+}
+
+/* ===== LAB MINI ===== */
+let labT='tetap';
+const NMAP={tetap:1,bergerak:2,gabungan:2};
+const lt=document.getElementById('labType');
+[['tetap','Tetap'],['bergerak','Bergerak'],['gabungan','Gabungan']].forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;if(k==='tetap')b.classList.add('active');b.onclick=()=>{labT=k;lt.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('labD').value=0;labUpd()};lt.appendChild(b)});
+function fmt(x){return (Math.round(x*100)/100).toString().replace('.',',')}
+function labUpd(){
+  const w=parseFloat(document.getElementById('labW').value)||0;
+  const d=parseFloat(document.getElementById('labD').value);
+  const n=NMAP[labT];
+  const s=d/100,h=s/n,F=w/n;
+  document.getElementById('labDv').textContent=d;
+  document.getElementById('labSvg').innerHTML=drawPulley(labT,d,'w',true);
+  document.getElementById('labLeg').innerHTML=legendHTML(labT);
+  const r=parseFloat(document.getElementById('labR').value)||0;
+  const Lb=r,Lk=(labT==='tetap'?r:2*r);
+  document.getElementById('rLb').textContent=fmt(Lb)+' cm';
+  document.getElementById('rLk').textContent=fmt(Lk)+' cm';
+  document.getElementById('rTb').textContent=fmt(w*Lb)+' N·cm';
+  document.getElementById('rTk').textContent=fmt(F*Lk)+' N·cm';
+  document.getElementById('rF').textContent=fmt(F)+' N';
+  document.getElementById('rS').textContent=fmt(s)+' m';
+  document.getElementById('rH').textContent=fmt(h)+' m';
+  document.getElementById('rWk').textContent=fmt(F*s)+' J';
+  document.getElementById('rWb').textContent=fmt(w*h)+' J';
+  document.getElementById('rKM').textContent=n;
+}
+document.getElementById('labD').oninput=labUpd;
+document.getElementById('labW').oninput=labUpd;
+document.getElementById('labR').oninput=labUpd;
+labUpd();
+function hitung(){
+  const w=+document.getElementById('kW').value,h=+document.getElementById('kH').value,n=+document.getElementById('kN').value;
+  const F=w/n,s=n*h,W=F*s;
+  document.getElementById('kOut').innerHTML=`<div>KM<b>${n}</b></div><div>Gaya F = w/n<b>${fmt(F)} N</b></div><div>Jarak tarik s = n·h<b>${fmt(s)} m</b></div><div>Usaha W = F×s<b>${fmt(W)} J</b></div>`;
+}
+hitung();
+
+/* ===== APLIKASI ===== */
+const APL=[
+ ["🚩","Tiang bendera","Tetap","Tali ditarik ke bawah, bendera naik. Katrol di puncak tiang tidak berpindah."],
+ ["🪣","Sumur timba","Tetap","Katrol di atas sumur mengubah arah tarikan sehingga menimba lebih nyaman."],
+ ["🪟","Tirai dan jemuran katrol","Tetap","Tali melewati roda kecil sehingga tarikan ke samping/bawah menggerakkan tirai."],
+ ["🏋️","Alat fitness (lat pulldown)","Tetap","Menarik beban ke bawah mengangkat pemberat di sisi lain."],
+ ["🧱","Ember material bangunan","Bergerak","Katrol dipasang pada ember, satu ujung tali diikat di atas, ujung lainnya ditarik ke atas. Dua tali menopang ember, jadi KM = 2."],
+ ["🏗️","Pengait (hook) derek","Bergerak","Katrol di pengait ikut naik bersama beban, tali di kedua sisinya menopang beban."],
+ ["⛵","Kerekan layar kapal","Gabungan","Beberapa katrol memudahkan menaikkan layar yang berat."],
+ ["🏗️","Derek konstruksi (takal)","Gabungan","Banyak katrol dan tali penopang memungkinkan angkat beton atau besi berat."],
+ ["🛗","Lift (lift dengan beban penyeimbang)","Tetap","Katrol di atas membalik arah tali, beban penyeimbang di sisi lain mengurangi tenaga motor."]
+];
+document.getElementById('apl').innerHTML=APL.map(a=>`<div class="fc" onclick="this.classList.toggle('open')"><div class="em">${a[0]}</div><b>${a[1]}</b> <span class="pill" style="background:${a[2]==='Tetap'?'var(--blue)':a[2]==='Bergerak'?'var(--orange)':'var(--purple)'}">${a[2]}</span><div class="more">${a[3]}</div></div>`).join('');
+
+/* ===== ASESMEN AWAL ===== */
+const AS=[
+ {q:"Pesawat sederhana adalah alat yang berfungsi untuk ...",o:["Menghemat energi tanpa batas","Mempermudah usaha manusia","Menciptakan usaha baru","Mengurangi massa benda"],a:1,e:"Pesawat sederhana mempermudah usaha dengan memperkecil gaya atau mengubah arah gaya."},
+ {q:"Rumus usaha yang benar adalah ...",o:["W = F + s","W = F : s","W = F × s","W = s − F"],a:2,e:"Usaha sama dengan gaya dikali perpindahan, satuannya joule."},
+ {q:"Satuan usaha dalam SI adalah ...",o:["Newton","Joule","Watt","Pascal"],a:1,e:"Joule (J). Newton adalah satuan gaya."},
+ {q:"Fungsi utama katrol tetap adalah ...",o:["Memperkecil gaya jadi setengah","Mengubah arah gaya","Menambah berat beban","Memperpendek tali"],a:1,e:"Katrol tetap hanya mengubah arah gaya. KM = 1."},
+ {q:"Menurutmu, apakah katrol bergerak mengurangi usaha yang dilakukan?",o:["Ya, usaha jadi setengah","Tidak, hanya gayanya yang mengecil","Ya, usaha jadi nol","Tidak ada hubungannya"],a:1,e:"Gaya jadi lebih kecil, tetapi tali ditarik lebih jauh, sehingga usaha tetap sama (ideal)."}
+];
+let asI=0,asS=0;
+function renderAs(){
+  const box=document.getElementById('asBox');
+  document.getElementById('asBar').style.width=(asI/AS.length*100)+'%';
+  if(asI>=AS.length){
+    const msg=asS>=4?"Pengetahuan awalmu sudah kuat. Siap menantang diri di simulasi!":asS>=2?"Fondasimu sudah ada. Perhatikan lagi rumus dan konsep keuntungan mekanis.":"Tidak apa-apa! Mulai dari konsep pesawat sederhana dan usaha, kita pelajari bersama.";
+    box.innerHTML=`<div class="center"><div class="big">Hasil: ${asS} / ${AS.length}</div><p>${msg}</p><button class="btn" onclick="show('materi')">Lanjut ke Materi ➜</button> <button class="btn ghost" onclick="asI=0;asS=0;renderAs()">Ulangi</button></div>`;return;
+  }
+  const q=AS[asI];
+  box.innerHTML=`<p><b>Soal ${asI+1}/${AS.length}</b></p><div class="big">${q.q}</div>`+q.o.map((t,i)=>`<button class="opt" data-i="${i}">${String.fromCharCode(65+i)}. ${t}</button>`).join('')+`<div id="asFb"></div>`;
+  box.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    box.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.i===q.a)x.classList.add('right')});
+    if(i===q.a)asS++;else b.classList.add('wrong');
+    document.getElementById('asFb').innerHTML=`<div class="${i===q.a?'ok':'think'}">${i===q.a?'✅ Tepat! ':'💡 Belum tepat. '}${q.e}</div><button class="btn" onclick="asI++;renderAs()">Lanjut ➜</button>`;
+  });
+}
+renderAs();
+
+/* ===== KUIS BATTLE ===== */
+const COLORS=["#2563eb","#dc2626","#16a34a","#ea580c","#7c3aed"];
+const QS=[
+ {q:"Keuntungan mekanis katrol tetap adalah ...",o:["1","2","3","0,5"],a:0,e:"Katrol tetap hanya mengubah arah gaya, KM = 1."},
+ {q:"Beban 400 N diangkat dengan katrol bergerak (ideal). Gaya tariknya ...",o:["800 N","400 N","200 N","100 N"],a:2,e:"F = w/2 = 400/2 = 200 N."},
+ {q:"Fungsi utama katrol tetap adalah ...",o:["Mengubah arah gaya","Mengubah massa beban","Memperkecil usaha","Menambah gesekan"],a:0,e:"Katrol tetap mengubah arah gaya."},
+ {q:"Tali ditarik 4 m pada katrol bergerak. Beban naik setinggi ...",o:["8 m","4 m","2 m","1 m"],a:2,e:"s = 2h, maka h = 4/2 = 2 m."},
+ {q:"Katrol gabungan dengan 4 tali penopang mengangkat beban 800 N. Gaya tarik ...",o:["800 N","400 N","200 N","100 N"],a:2,e:"F = w/n = 800/4 = 200 N."},
+ {q:"Gaya 50 N memindahkan benda 3 m. Usahanya ...",o:["53 J","150 J","16,7 J","47 J"],a:1,e:"W = F × s = 50 × 3 = 150 J."},
+ {q:"Contoh penerapan katrol tetap adalah ...",o:["Tiang bendera","Mata pisau","Tangga","Tuas cangkul"],a:0,e:"Tiang bendera memakai katrol tetap di puncaknya."},
+ {q:"Beban 600 N ditarik dengan gaya 200 N. Keuntungan mekanisnya ...",o:["2","3","4","0,33"],a:1,e:"KM = w/F = 600/200 = 3."},
+ {q:"Pernyataan yang benar tentang usaha pada katrol ideal ...",o:["Usaha berkurang jadi setengah","Usaha tetap sama","Usaha bertambah dua kali","Usaha menjadi nol"],a:1,e:"Gaya mengecil, jarak tarik membesar, usaha tetap (W = w × h)."},
+ {q:"KM = 3 dan beban naik 2 m. Tali harus ditarik sejauh ...",o:["2 m","3 m","5 m","6 m"],a:3,e:"s = n × h = 3 × 2 = 6 m."},
+ {q:"Satuan gaya dalam SI adalah ...",o:["Joule","Newton","Watt","Meter"],a:1,e:"Newton (N)."},
+ {q:"Beban 300 N dinaikkan 2 m dengan katrol bergerak. Usaha minimum yang diperlukan ...",o:["150 J","300 J","600 J","1.200 J"],a:2,e:"W = w × h = 300 × 2 = 600 J (gaya 150 N × tali 4 m)."},
+ {q:"Rangkaian katrol memiliki 4 tali menopang beban. KM-nya ...",o:["1","2","4","8"],a:2,e:"KM = jumlah tali yang menopang beban = 4."},
+ {q:"Mengapa katrol bergerak terasa lebih ringan tetapi lebih lama?",o:["Tali ditarik lebih jauh","Beban jadi lebih ringan","Gravitasi berkurang","Katrol menambah energi"],a:0,e:"Gaya setengah, tetapi tali ditarik dua kali lebih jauh (usaha sama)."},
+ {q:"Sumur timba memakai katrol ...",o:["Tetap","Bergerak","Gabungan 4 tali","Roda gigi"],a:0,e:"Katrol terpasang tetap di atas sumur untuk mengubah arah tarikan."}
+];
+let G=[],gi=0,qi=0,order=[],timer=null,tl=30,answered=false;
+const nm=document.getElementById('qNames');
+nm.innerHTML=COLORS.map((c,i)=>`<div class="chip" style="background:${c}">Kelompok ${i+1}<br><input type="text" id="gn${i}" value="Kelompok ${i+1}" style="width:100%;margin-top:.3rem;text-align:center"></div>`).join('');
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startQuiz(){
+  G=COLORS.map((c,i)=>({n:document.getElementById('gn'+i).value||('Kelompok '+(i+1)),s:0,c}));
+  order=shuffle(QS.map((_,i)=>i));qi=0;gi=0;
+  document.getElementById('qSetup').style.display='none';
+  document.getElementById('qEnd').style.display='none';
+  document.getElementById('qGame').style.display='block';
+  loadQ();
+}
+function drawScore(){
+  document.getElementById('qScore').innerHTML=G.map((g,i)=>`<div class="chip ${i===gi?'act':''}" style="background:${g.c}">${g.n}<div class="sc">${g.s}</div></div>`).join('');
+}
+function loadQ(){
+  answered=false;
+  const q=QS[order[qi]];
+  const opts=shuffle(q.o.map((t,i)=>({t,ok:i===q.a})));
+  document.getElementById('qNo').textContent=`Soal ${qi+1}/${QS.length}`;
+  document.getElementById('qTurn').textContent='Giliran: '+G[gi].n;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qFb').innerHTML='';
+  document.getElementById('qSteal').innerHTML='';
+  document.getElementById('qNext').style.display='none';
+  const ob=document.getElementById('qOpts');
+  ob.innerHTML=opts.map((o,i)=>`<button class="opt" data-ok="${o.ok}">${String.fromCharCode(65+i)}. ${o.t}</button>`).join('');
+  ob.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.ok==='true',b));
+  drawScore();
+  tl=30;tick();clearInterval(timer);
+  timer=setInterval(()=>{tl--;tick();if(tl<=0){clearInterval(timer);if(!answered)answer(false,null,true)}},1000);
+}
+function tick(){document.getElementById('qTime').textContent='⏱ '+tl;document.getElementById('qBar').style.width=(tl/30*100)+'%'}
+function reveal(){document.querySelectorAll('#qOpts .opt').forEach(x=>{x.disabled=true;if(x.dataset.ok==='true')x.classList.add('right')})}
+function answer(ok,btn,timeout){
+  if(answered)return;answered=true;clearInterval(timer);
+  const q=QS[order[qi]];reveal();
+  if(ok){
+    const pts=10+(tl>=20?5:0);G[gi].s+=pts;
+    document.getElementById('qFb').innerHTML=`<div class="ok">✅ Benar! +${pts} poin untuk ${G[gi].n}. ${q.e}</div>`;
+  }else{
+    if(btn)btn.classList.add('wrong');
+    document.getElementById('qFb').innerHTML=`<div class="think">${timeout?'⏰ Waktu habis. ':'❌ Belum tepat. '}Kelompok lain boleh merebut (+5)! Penjelasan: ${q.e}</div>`;
+    document.getElementById('qSteal').innerHTML='<b>Siapa yang berhasil merebut?</b> '+G.map((g,i)=>i===gi?'':`<button class="btn" style="background:${g.c}" onclick="steal(${i})">${g.n}</button>`).join('')+'<button class="btn ghost" onclick="steal(-1)">Tidak ada</button>';
+  }
+  drawScore();
+  document.getElementById('qNext').style.display=ok?'inline-block':'none';
+}
+function steal(i){
+  if(i>=0)G[i].s+=5;
+  document.getElementById('qSteal').innerHTML=i>=0?`<span class="ok">🎯 ${G[i].n} merebut +5 poin!</span>`:'';
+  document.getElementById('qNext').style.display='inline-block';drawScore();
+}
+function nextQ(){
+  qi++;gi=(gi+1)%G.length;
+  if(qi>=QS.length){endQuiz();return}
+  loadQ();
+}
+function endQuiz(){
+  clearInterval(timer);
+  document.getElementById('qGame').style.display='none';
+  const r=G.slice().sort((a,b)=>b.s-a.s);
+  const e=document.getElementById('qEnd');e.style.display='block';
+  const podiumOrder=[r[1],r[0],r[2]];const heights=[170,230,130];const medals=["🥈","🥇","🥉"];
+  e.innerHTML=`<h2>🎉 Kuis Selesai!</h2><div class="big">Juara: ${r[0].n}</div>
+  <div class="pod">${podiumOrder.map((g,i)=>`<div style="background:${g.c};height:${heights[i]}px">${medals[i]}<br>${g.n}<br>${g.s}</div>`).join('')}</div>
+  <p>${r.map((g,i)=>`${i+1}. ${g.n}: <b>${g.s}</b>`).join(' &nbsp;·&nbsp; ')}</p>
+  <button class="btn" onclick="document.getElementById('qEnd').style.display='none';document.getElementById('qSetup').style.display='block'">🔁 Main lagi</button>`;
+}
+</script>
+</body>
+</html>
